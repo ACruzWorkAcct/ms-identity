@@ -50,6 +50,13 @@
         var userName = "";
         var loginType = isIE ? "REDIRECT" : "POPUP";
 
+        msalApplication.handleRedirectPromise()
+            .then(handleResponse)
+            .catch(function (error) {
+                console.log(error);
+            });
+        // TODO: add CODE before this line
+
         function updateUserInterface() {
             var divWelcome = document.getElementById('WelcomeMessage');
             divWelcome.innerHTML = 'Welcome <strong>' + userName + '</strong> to MS Graph API.';
@@ -87,10 +94,59 @@
             });
         }
 
-        function signIn() {
-            console.log("DEBUG --> signIn click <--");
-            updateUserInterface();
+        function getUserFromMSGraph(accessToken, callback) {
+            var endpoint = graphConfig.graphMeEndpoint;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200)
+                    callback(JSON.parse(this.responseText));
+            }
+            xmlHttp.open("GET", endpoint, true);
+            xmlHttp.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+            xmlHttp.send();
         }
+
+        function graphAPICallback(data) {
+            document.getElementById("json").innerHTML = JSON.stringify(data, null, 2);
+        }
+
+        function handleResponse(loginResponse) {
+            if (loginResponse != null) {
+                userName = loginResponse.account.username;
+            } else {
+                var currentAccounts = msalApplication.getAllAccounts();
+                if (currentAccounts == null || currentAccounts.length == 0) {
+                    return;
+                } else {
+                    userName = currentAccounts[0].username;
+                }
+            }
+            updateUserInterface();
+            acquireTokenAndGetUser();
+        }
+        
+        function signIn() {
+            console.log("DEBUG --> signIn() <--");
+            
+            if (loginType == "POPUP") {
+                msalApplication.loginPopup(graphConfig.requestObj)
+                    .then(handleResponse)
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            } else {
+                msalApplication.loginRedirect(graphConfig.requestObj)
+            }
+        }
+
+        function signOut() {
+            var logoutRequest = {
+                account: msalApplication.getAccountByUsername(userName)
+            };
+
+            msalApplication.logout(logoutRequest);
+        }
+        // TODO: add FUNCTIONS before this line
     </script>
 </body>
 </html>
