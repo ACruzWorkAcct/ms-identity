@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started With MS Identity</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.min.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.11.1/js/msal-browser.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <p id="WelcomeMessage">Microsoft Authentication Library For Javascript (MSAL.js) Exercise</p>
+            <button id="SignIn" onclick="signIn()">Sign In</button>
+        </div>
+        <div>
+            <pre id="json"></pre>
+        </div>
+    </div>
+
+    <script>
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf('MSIE');
+        var msie11 = ua.indexOf('Trident/');
+        var msedge = ua.indexOf('Edge/');
+        var isIE = msie > 0 || msie11 > 0;
+        var isEdge = msedge > 0;
+
+        var msalConfig = {
+            auth: {
+                clientId: '',
+                authority: '',
+                redirectURI: ''
+            },
+            cache: {
+                cacheLocation: "localStorage",
+                storeAuthStateInCookie: isIE || isEdge
+            }
+        };
+
+        var graphConfig = {
+            graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
+            requestObj: {
+                scopes: ["user.read"]
+            }
+        };
+
+        var msalApplication = new msal.PublicClientApplication(msalConfig);
+        var userName = "";
+        var loginType = isIE ? "REDIRECT" : "POPUP";
+
+        function updateUserInterface() {
+            var divWelcome = document.getElementById('WelcomeMessage');
+            divWelcome.innerHTML = 'Welcome <strong>' + userName + '</strong> to MS Graph API.';
+
+            var loginbutton = document.getElementById('SignIn');
+            loginbutton.innerHTML = 'Sign Out';
+            loginbutton.setAttribute('onclick', 'signOut();');
+        }
+
+        function signIn() {
+            console.log("DEBUG --> signIn click <--");
+            updateUserInterface();
+        }
+    </script>
+</body>
+</html>
