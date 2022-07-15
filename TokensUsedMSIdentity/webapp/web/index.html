@@ -125,9 +125,7 @@
             acquireTokenAndGetUser();
         }
         
-        function signIn() {
-            console.log("DEBUG --> signIn() <--");
-            
+        function signIn() { 
             if (loginType == "POPUP") {
                 msalApplication.loginPopup(graphConfig.requestObj)
                     .then(handleResponse)
