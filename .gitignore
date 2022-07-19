@@ -2,6 +2,7 @@
 ## Private configs
 MultiOrgMSIdentity/appsettings.json
 SingleOrgMSIdentity/appsettings.json
+TopologyOptions/appsettings.json
 
 ## Node
 # Logs
