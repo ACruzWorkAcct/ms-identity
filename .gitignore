@@ -1,6 +1,7 @@
 # My Ignores
 ## Private configs
 MultiOrgMSIdentity/appsettings.json
+SingleOrgMSIdentity/appsettings.json
 
 ## Node
 # Logs
